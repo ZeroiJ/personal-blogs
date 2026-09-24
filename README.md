@@ -32,7 +32,15 @@ Pages in progress:
 The blog homepage and article pages are not built yet — per AGENTS.md,
 real content only from real material.
 
-## Deploy — Cloudflare Pages (when built)
-1. Pages → Create → Connect to Git → `ZeroiJ/personal-blogs`
-2. Framework preset: **None**. Build command: **(empty)**. Output directory: **`/`**
-3. Custom domain: `blog.zeroij.dev` → Enforce HTTPS
+## Deploy — Cloudflare Workers (static assets)
+Connected: `personal-blogs.zeroij.workers.dev` (Git integration).
+
+`wrangler.jsonc` binds the repo root as static assets with `404.html` as the
+not-found handler. The next build picks it up automatically:
+
+- Build command: `npx wrangler deploy` (Workers Builds default)
+- Deploy command: `npx wrangler deploy`
+- Custom domain (optional, when wanted): attach `blog.zeroij.dev` in Worker settings
+
+Root `/` has no `index.html` yet, so it serves the styled 404 until the blog
+homepage is built. The OWT project page lives at `/projects/opencode-warp-tui/`.
