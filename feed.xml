@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+<channel>
+<title>zeroij/blog</title>
+<link>https://blog.zeroij.dev/</link>
+<description>Builds, experiments, notes. Separate from portfolio.</description>
+<language>en</language>
+<item>
+<title>Tiny KV in Go with mmap</title>
+<link>https://blog.zeroij.dev/posts/tiny-kv.html</link>
+<pubDate>Sun, 14 Sep 2026 00:00:00 GMT</pubDate>
+<description>Append-only log + in-memory index + mmap reads.</description>
+</item>
+</channel>
+</rss>
