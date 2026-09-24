@@ -1,27 +1,33 @@
 # zeroij/blog
 
-Minimal developer blog — separate from portfolio. Workbench-dense theme: sidebar + dense filterable log. Static, no build.
+Minimal developer blog — separate from portfolio. Static, no build, Cloudflare Pages.
 
-## Local
-Open `index.html`, or:
+## Design baseline
+
+`AGENTS.md` is the rulebook (voice, visual direction, content rules).
+
+Approved direction: **`sketches/005-portfolio-editorial/`** — editorial notebook
+with the portfolio's visual DNA (cobalt, hairlines, Geist, grid, pixel glyph).
+
+Preview:
 ```
-npx serve .
+xdg-open sketches/005-portfolio-editorial/index.html
+xdg-open sketches/005-portfolio-editorial/article.html
 ```
 
-## Deploy — Cloudflare Pages
+## Repo state
+
+```
+AGENTS.md              rulebook
+sketches/005-...       approved homepage + article design
+_headers _redirects    cloudflare pages config
+404.html robots.txt favicon.svg
+```
+
+The production site (porting 005 to root, RSS, posts) is not built yet —
+per AGENTS.md, design first, real content only from real material.
+
+## Deploy — Cloudflare Pages (when built)
 1. Pages → Create → Connect to Git → `ZeroiJ/personal-blogs`
 2. Framework preset: **None**. Build command: **(empty)**. Output directory: **`/`**
 3. Custom domain: `blog.zeroij.dev` → Enforce HTTPS
-4. Done. `_headers`, `_redirects`, `404.html`, `robots.txt` are already at root.
-
-## Add a post
-1. Copy `posts/tiny-kv.html` → `posts/my-post.html`
-2. Add one `.item` row in `index.html` + one `<item>` in `feed.xml`
-3. Commit small, push — Pages auto-deploys.
-
-## Structure
-```
-index.html posts/ assets/css/site.css assets/js/app.js
-feed.xml sitemap.xml _headers _redirects 404.html
-sketches/ (design history, noindex)
-```

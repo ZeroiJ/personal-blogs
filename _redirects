@@ -1,2 +1,2 @@
 # Cloudflare Pages redirects (static, no build)
-/rss.xml /feed.xml 301
+# /rss.xml /feed.xml 301  # re-enable when feed.xml exists
