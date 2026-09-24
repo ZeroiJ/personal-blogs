@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sujal Birwadkar — things I build, break, and figure out</title>
+<meta name="description" content="Personal dev blog: Rust/TypeScript projects, AI experiments, databases, debugging war stories.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<div class="frame">
+  <header class="masthead">
+    <a class="wordmark" href="#">Sujal<span class="dot">.</span>builds</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#" aria-current="page">Writing</a>
+      <a href="#">Projects</a>
+      <a href="#">About</a>
+      <a href="#" aria-label="RSS feed" title="RSS">RSS</a>
+      <button class="theme-btn" type="button" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle theme"><span class="knob"></span></button>
+    </nav>
+  </header>
+  <hr class="rule">
+
+  <main>
+    <section class="hero">
+      <div class="hero-avatar" aria-hidden="true">SB</div>
+      <div class="hero-text">
+        <h1>Hi, I'm Sujal — I build small things and write down what broke.</h1>
+        <p class="lede">Mostly Rust and TypeScript, a suspicious amount of databases, and whatever AI experiment kept me up past midnight. This is the messy lab notebook; the polished version lives on <a href="#">my portfolio</a>.</p>
+      </div>
+    </section>
+
+    <section class="feed" aria-label="Recent writing">
+      <h2 class="section-label">Recent writing</h2>
+
+      <article class="entry">
+        <h3><a href="#">I rebuilt my personal search with pgvector and it's dumber than I hoped</a></h3>
+        <p class="entry-meta"><time datetime="2026-09-20">Sep 20, 2026</time><span class="sep">·</span>6 min<span class="tag">ai</span><span class="tag">postgres</span><span class="tag">database</span></p>
+        <p class="excerpt">1200 notes, one embedding table, recall@5 of 0.81. Here's why semantic search on my own writing mostly surfaces the wrong essay, and the cheap hybrid fix that saved it.</p>
+      </article>
+
+      <article class="entry">
+        <h3><a href="#">A 300-line key-value store taught me more than any database course</a></h3>
+        <p class="entry-meta"><time datetime="2026-09-14">Sep 14, 2026</time><span class="sep">·</span>9 min<span class="tag">rust</span><span class="tag">databases</span><span class="tag">experiment</span></p>
+        <p class="excerpt">Append-only log, in-memory index, mmap reads, and the moment I understood why compaction exists. Benchmarks included, humility included.</p>
+      </article>
+
+      <article class="entry">
+        <h3><a href="#">Debugging a race condition that only happened on Tuesdays</a></h3>
+        <p class="entry-meta"><time datetime="2026-09-02">Sep 2, 2026</time><span class="sep">·</span>7 min<span class="tag">debugging</span><span class="tag">typescript</span></p>
+        <p class="excerpt">It wasn't the day, it was the cron job. A story about <code>tokio::spawn</code>, a cache that lied, and three days of me blaming the wrong abstraction.</p>
+      </article>
+
+      <article class="entry">
+        <h3><a href="#">SQLite as a job queue: I tried it so you don't have to (you should)</a></h3>
+
+        <p class="entry-meta"><time datetime="2026-08-18">Aug 18, 2026</time><span class="sep">·</span>5 min<span class="tag">sqlite</span><span class="tag">tools</span></p>
+        <p class="excerpt">Everyone says "just use Redis." I ran a <code>SELECT ... FOR UPDATE</code>-style loop for 40k jobs and honestly it just worked. Numbers, caveats, when to bail.</p>
+      </article>
+
+      <article class="entry">
+        <h3><a href="#">Making a CLI people won't delete after five minutes</a></h3>
+        <p class="entry-meta"><time datetime="2026-08-04">Aug 4, 2026</time><span class="sep">·</span>6 min<span class="tag">rust</span><span class="tag">tools</span></p>
+        <p class="excerpt">Exit codes, <code>--help</code> that's actually helpful, and logging that doesn't make you scroll. Tiny ergonomics that decide whether a tool survives week one.</p>
+      </article>
+    </section>
+
+    <p class="all-posts"><a href="#">All posts →</a></p>
+  </main>
+
+  <hr class="rule">
+  <footer class="footer">
+    <p>Rust, TypeScript, and whatever the debugging session demands.</p>
+    <p class="footer-links"><a href="#">GitHub</a><span class="sep">·</span><a href="#">RSS</a><span class="sep">·</span><a href="#">Steal this layout — it's yours</a></p>
+  </footer>
+</div>
+<script src="site.js" defer></script>
+</body>
+</html>
