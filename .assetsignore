@@ -1,0 +1,8 @@
+# repo-only files — not part of the published site
+.git
+.gitignore
+.assetsignore
+AGENTS.md
+README.md
+wrangler.jsonc
+sketches
