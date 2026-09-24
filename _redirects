@@ -1,0 +1,2 @@
+# Cloudflare Pages redirects (static, no build)
+/rss.xml /feed.xml 301
