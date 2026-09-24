@@ -1,46 +1,52 @@
-# zeroij/blog
+# zeroij/notes
 
-Minimal developer blog — separate from portfolio. Static, no build, Cloudflare Pages.
+Personal developer blog — separate from the portfolio. Static HTML/CSS, no build,
+no JS, deployed as a Cloudflare Worker serving static assets.
 
-## Design baseline
+Live: **https://personal-blogs.zeroij.workers.dev**
 
-`AGENTS.md` is the rulebook (voice, visual direction, content rules).
+`AGENTS.md` is the rulebook: voice, visual direction, content rules. Read it
+before writing anything here.
 
-Approved direction: **`sketches/005-portfolio-editorial/`** — editorial notebook
-with the portfolio's visual DNA (cobalt, hairlines, Geist, grid, pixel glyph).
-
-Preview:
-```
-xdg-open sketches/005-portfolio-editorial/index.html
-xdg-open sketches/005-portfolio-editorial/article.html
-```
-
-## Repo state
+## The site
 
 ```
-AGENTS.md              rulebook
-assets/css/site.css    shared design system (from sketch 005)
-projects/              project pages (OWT so far)
-sketches/005-...       approved homepage + article design
-_headers _redirects    cloudflare config
-404.html robots.txt favicon.svg
+/                                  blog homepage (identity + current work + writing)
+/projects/opencode-warp-tui/       OWT project journal (five sections)
+/feed.xml                          RSS (real posts only)
+/sitemap.xml
 ```
 
-Pages in progress:
-- `projects/opencode-warp-tui/` — project journal page (five sections)
+- Design language: editorial notebook with the portfolio's DNA — cobalt
+  `#0038FF`, 1px hairlines, Geist + Geist Mono, 32px grid, grain, pixel glyph.
+- Tokens and shared components live in `assets/css/site.css`. Page-specific CSS
+  sits next to its page (`assets/css/home.css`, `projects/*/project.css`).
+- Dark only, zero JavaScript, no theme toggle, no build step.
 
-The blog homepage and article pages are not built yet — per AGENTS.md,
-real content only from real material.
+## Content rules that actually matter here
 
-## Deploy — Cloudflare Workers (static assets)
-Connected: `personal-blogs.zeroij.workers.dev` (Git integration).
+- No invented projects, benchmarks, dates, or stories. If the material doesn't
+  exist yet, either link nothing or ask.
+- The writing voice is in `AGENTS.md` §2. If a sentence sounds like a company
+  wrote it, rewrite it.
+- One real post beats five placeholder ones.
 
-`wrangler.jsonc` binds the repo root as static assets with `404.html` as the
-not-found handler. The next build picks it up automatically:
+## Deploy
 
-- Build command: `npx wrangler deploy` (Workers Builds default)
-- Deploy command: `npx wrangler deploy`
-- Custom domain (optional, when wanted): attach `blog.zeroij.dev` in Worker settings
+Git-connected Worker; `wrangler.jsonc` binds the repo root as static assets
+(`not_found_handling: 404-page`) and `.assetsignore` keeps repo-only files
+(`AGENTS.md`, `README.md`, `.git`) out of the deploy.
 
-Root `/` has no `index.html` yet, so it serves the styled 404 until the blog
-homepage is built. The OWT project page lives at `/projects/opencode-warp-tui/`.
+Deploy from the laptop:
+```sh
+npx wrangler deploy
+```
+
+Build settings in the dashboard: build command `npx wrangler deploy`,
+deploy command `npx wrangler deploy`. Custom domain (`blog.zeroij.dev`) can be
+attached in Worker settings — when that happens, update the canonical URLs in
+`index.html`, `projects/opencode-warp-tui/index.html`, `feed.xml`, `robots.txt`
+and `sitemap.xml`.
+
+Note: don't add long `immutable` caching in `_headers` — filenames aren't
+content-hashed without a build step.
