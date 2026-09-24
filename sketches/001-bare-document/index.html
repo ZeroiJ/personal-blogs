@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>bare-document — sketch</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#FBFBF9;--fg:#1a1a1a;--muted:#6f6f6f;--line:#e7e5e0;--accent:#1a1a1a;--code-bg:#f1efe9;--mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+[data-theme="dark"]{--bg:#131311;--fg:#e8e6e1;--muted:#9a978f;--line:#2a2926;--accent:#fff;--code-bg:#1e1d1b}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg);line-height:1.65;-webkit-font-smoothing:antialiased}
+.wrap{max-width:68ch;margin:0 auto;padding:32px 20px 80px}
+.top{display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:28px;font-size:14px}
+.top a{color:var(--fg);text-decoration:none}.top a:hover{text-decoration:underline}
+.top nav{display:flex;gap:16px}.top nav a.active{text-decoration:underline;text-underline-offset:4px}
+.mono{font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.intro h1{font-size:22px;font-weight:650;letter-spacing:-.02em;margin-bottom:8px}
+.intro p{font-size:15.5px;color:var(--muted);max-width:56ch}
+.intro p a{color:var(--fg)}
+.sec{margin-top:36px}.sec h2{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;border-bottom:1px solid var(--line);padding-bottom:8px}
+.row{display:flex;gap:12px;padding:10px 0;border-bottom:1px dotted var(--line);font-size:15px;cursor:pointer}
+.row:hover{background:rgba(127,127,127,.07)}
+.row .d{font-family:var(--mono);font-size:12.5px;color:var(--muted);min-width:92px;padding-top:3px}
+.row .t{flex:1}.row .t span.tag{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:99px;padding:1px 7px;margin-left:8px;color:var(--muted);vertical-align:1px}
+.view{display:none}.view.on{display:block}
+.article h1{font-size:30px;line-height:1.2;letter-spacing:-.03em;margin:12px 0 8px}
+.article .meta{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-bottom:20px}
+.article p{margin:0 0 16px;font-size:16px}
+.article h3{font-size:17px;margin:28px 0 8px}
+pre{font-family:var(--mono);font-size:13px;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:14px;overflow:auto;margin:16px 0}
+code{font-family:var(--mono);font-size:.88em}
+p code{background:var(--code-bg);padding:1px 5px;border-radius:4px}
+.foot{margin-top:40px;border-top:1px solid var(--line);padding-top:12px;display:flex;justify-content:space-between;font-size:14px}
+.btn{font-family:var(--mono);font-size:12px;border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:6px;padding:5px 10px;cursor:pointer}
+.btn:hover{border-color:var(--fg)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><a href="#" onclick="show('home');return false"><strong>zeroij</strong> <span class="mono">/ notes</span></a>
+<nav><a href="#" id="n-home" class="active" onclick="show('home');return false">home</a><a href="#" id="n-art" onclick="show('article');return false">article</a><a href="#">portfolio ↗</a><button class="btn" onclick="toggleTheme()">◐ theme</button></nav></div>
+
+<div id="v-home" class="view on">
+<div class="intro"><h1>Things I build & break.</h1>
+<p>I'm Zero — backend-leaning dev. This is a separate scratch space from my <a href="#">portfolio</a>: experiments, small builds, and technical notes. No newsletter popup. <span class="mono">RSS →</span></p></div>
+
+<div class="sec"><h2>Builds</h2>
+<div class="row" onclick="show('article')"><span class="d">2026-09-14</span><span class="t">Tiny KV store in Go with mmap <span class="tag">go · 8 min</span></span></div>
+<div class="row" onclick="show('article')"><span class="d">2026-08-30</span><span class="t">ESP32 soil sensor that actually survived winter <span class="tag">hardware</span></span></div>
+<div class="row" onclick="show('article')"><span class="d">2026-08-02</span><span class="t">SQLite as a queue: enough for side projects? <span class="tag">sqlite</span></span></div>
+</div>
+<div class="sec"><h2>Notes / experiments</h2>
+<div class="row" onclick="show('article')"><span class="d">2026-09-20</span><span class="t">Tried pgvector for personal search <span class="tag">experiment</span></span></div>
+<div class="row" onclick="show('article')"><span class="d">2026-07-19</span><span class="t">Why I stopped self-hosting Plausible <span class="tag">meta</span></span></div>
+<div class="row" onclick="show('article')"><span class="d">2026-06-11</span><span class="t">CSS-only TOC with :has() <span class="tag">css · 3 min</span></span></div>
+</div>
+<p class="mono" style="margin-top:28px">→ <a href="#" style="color:inherit" onclick="show('article');return false">archive (34 posts)</a> · tags: go sqlite esp32 postgres</p>
+</div>
+
+<div id="v-article" class="view article">
+<p class="mono">← <a href="#" style="color:inherit" onclick="show('home');return false">all notes</a> · BUILD</p>
+<h1>Tiny KV store in Go with mmap</h1>
+<div class="meta">2026-09-14 · 8 min · go · <a href="#" style="color:inherit">discuss on GitHub</a></div>
+<p>I wanted to understand LSM vs B-tree tradeoffs, so I built the dumbest durable KV I could: append-only log + in-memory index + <code>mmap</code> reads. ~300 lines.</p>
+<h3>The log format</h3>
+<p>Each record is <code>[keyLen|valLen|key|value|crc]</code>. On open we scan once and rebuild the offset map. Writes are O(1), reads are one seek.</p>
+<pre>// pseudo — index rebuild
+for off := 0; off &lt; size; {
+  k,v,n := readRecord(mmap[off:])
+  index[k] = off
+  off += n
+}</pre>
+<p>Takeaway: for &lt;100k keys this is embarrassingly fine. Compaction is where it gets real — that's part 2.</p>
+<pre>$ go test -bench=. -benchmem
+BenchmarkPut-8   412331   2891 ns/op
+BenchmarkGet-8  1842211    651 ns/op</pre>
+<div class="foot"><a href="#" style="color:inherit" onclick="show('home');return false">← SQLite as a queue</a><a href="#" style="color:inherit" onclick="show('home');return false">ESP32 sensor →</a></div>
+</div>
+</div>
+<script>
+function show(v){document.querySelectorAll('.view').forEach(e=>e.classList.remove('on'));document.getElementById('v-'+v).classList.add('on');document.getElementById('n-home').classList.toggle('active',v==='home');document.getElementById('n-art').classList.toggle('active',v==='article');window.scrollTo(0,0)}
+function toggleTheme(){const h=document.documentElement;h.dataset.theme=h.dataset.theme==='dark'?'':'dark'}
+if(matchMedia('(prefers-color-scheme: dark)').matches)document.documentElement.dataset.theme='dark';
+</script>
+</body>
+</html>
