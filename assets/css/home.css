@@ -1,0 +1,21 @@
+/* Blog homepage — reuses the shared system; only page-specific pieces here. */
+
+/* Currently building: one block, quieter than the writing list */
+.current{padding:56px 0 0}
+.current .section-label{display:inline-flex}
+.current-title{font-size:1.5rem;font-weight:500;letter-spacing:-.02em;margin-top:20px}
+.current-line{margin-top:10px;color:var(--muted);font-size:15.5px;line-height:1.7;max-width:42rem}
+.current-row{display:flex;justify-content:space-between;align-items:baseline;gap:18px;flex-wrap:wrap;margin-top:20px}
+.current-row .tags{margin-top:0}
+.current-link{font-size:14px;color:var(--muted)}
+.current-link:hover{color:var(--fg)}
+.current-last{margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--faint)}
+
+/* Writing list: honest note instead of a fake archive link */
+.feed{padding:72px 0 0}
+.feed-note{margin-top:26px;color:var(--faint);font-size:14.5px;line-height:1.6;max-width:38rem}
+
+@media(max-width:720px){
+  .current{padding-top:44px}
+  .feed{padding-top:56px}
+}
