@@ -75,7 +75,9 @@
 .note-tags{display:flex;gap:8px;flex-wrap:wrap}
 .note-tags .pill{color:var(--faint)}
 
-/* ── page entrance (tiny, CSS-only) ── */
+/* ── page entrance (tiny, CSS-only) ──
+   Deliberately scoped to the hero and the timeline only: the architecture
+   diagram and status panel stay completely still. */
 @media (prefers-reduced-motion:no-preference){
   .p-hero>*,.stage{animation:rise .6s var(--ease) backwards}
   .stage:nth-child(1){animation-delay:.1s}.stage:nth-child(2){animation-delay:.16s}
