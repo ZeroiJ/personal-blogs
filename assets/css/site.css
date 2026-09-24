@@ -26,13 +26,18 @@ html{background:var(--bg);-webkit-text-size-adjust:100%;scrollbar-color:var(--li
 body{
   font-family:var(--sans);
   color:var(--fg);
-  background-color:var(--bg);
+  background:var(--bg);
+  font-size:16px;line-height:1.6;letter-spacing:-.01em;
+  -webkit-font-smoothing:antialiased;
+}
+/* Technical grid: its own fixed layer so the squares stay put while the
+   content scrolls. (background-attachment:fixed is ignored on iOS.) */
+.grid-bg{
+  position:fixed;inset:0;z-index:-1;pointer-events:none;
   background-image:
     linear-gradient(var(--grid) 1px,transparent 1px),
     linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:32px 32px;
-  font-size:16px;line-height:1.6;letter-spacing:-.01em;
-  -webkit-font-smoothing:antialiased;
 }
 ::selection{background:var(--cobalt);color:#fff}
 a{color:var(--accent);text-decoration:none}
