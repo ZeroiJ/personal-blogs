@@ -13,5 +13,12 @@
 <pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
 <description>I tried making a better, simpler TUI for OpenCode. It got out of hand — now it's a working TUI, a memory engine, and one idea that's still just an idea.</description>
 </item>
+<item>
+<title>I Tried Making a Better OpenCode TUI. It Got Out of Hand.</title>
+<link>https://personal-blogs.zeroij.workers.dev/projects/opencode-warp-tui/story/</link>
+<guid isPermaLink="true">https://personal-blogs.zeroij.workers.dev/projects/opencode-warp-tui/story/</guid>
+<pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+<description>How a weekend-sized idea — a nicer Warp-style TUI for OpenCode — turned into a TUI, a memory system nobody planned, and two folders where there used to be one.</description>
+</item>
 </channel>
 </rss>
