@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenCode Warp TUI — Sujal Birwadkar</title>
+<meta name="description" content="I tried making a better, simpler TUI for OpenCode. It got out of hand. A Warp-inspired terminal UI, a JSONL memory engine, and one idea that is still just an idea.">
+<link rel="canonical" href="https://blog.zeroij.dev/projects/opencode-warp-tui/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="OpenCode Warp TUI — Sujal Birwadkar">
+<meta property="og:description" content="I tried making a better, simpler TUI for OpenCode. It got out of hand.">
+<meta property="og:url" content="https://blog.zeroij.dev/projects/opencode-warp-tui/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../assets/css/site.css">
+<link rel="stylesheet" href="project.css">
+</head>
+<body id="top">
+<a class="skip" href="#main">Skip to content</a>
+<svg class="grain" aria-hidden="true"><filter id="grain-f"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#grain-f)"/></svg>
+
+<div class="frame">
+  <header class="masthead">
+    <div class="brand">
+      <a class="wordmark" href="../../">Sujal Birwadkar</a>
+      <span class="brand-sub">/ projects</span>
+    </div>
+    <nav class="nav" aria-label="Page">
+      <a href="#top" aria-current="page">Overview</a>
+      <a href="#journey">Journey</a>
+      <a href="#architecture">Architecture</a>
+      <a href="#notes">Notes</a>
+      <a href="https://github.com/ZeroiJ/opencode-warp-tui">GitHub ↗</a>
+    </nav>
+  </header>
+  <hr class="rule">
+
+  <main id="main">
+    <!-- 01 / HERO -->
+    <section class="p-hero" aria-label="Overview">
+      <p class="p-eyebrow">Project — OpenCode Warp TUI</p>
+      <h1>I tried making a better, simpler TUI for OpenCode. <span class="hl">It got out of hand.</span></h1>
+      <p class="p-lede">The TUI works. The memory work is real too, but it lives in its own crate now. And yes, there was a stretch where I was researching whether this project needed an entire decision layer. We'll get to that.</p>
+      <div class="p-hero-meta">
+        <span class="m-l">Rust · OpenCode · TUI · AI</span>
+        <span class="m-l">AGPL-3.0 · 8 commits · last touched 2026.09.22</span>
+      </div>
+      <p class="p-actions">
+        <a class="grow" href="https://github.com/ZeroiJ/opencode-warp-tui">GitHub ↗</a>
+        <a class="grow" href="#journey">Read the story ↓</a>
+      </p>
+    </section>
+
+    <!-- 02 / THE JOURNEY -->
+    <section class="p-section" id="journey" aria-labelledby="journey-h">
+      <div class="section-head">
+        <span class="sec-num">02</span>
+        <h2 class="sec-title" id="journey-h">The journey</h2>
+        <span class="section-note">2026.09.18 → 2026.09.22</span>
+      </div>
+
+      <ol class="timeline">
+        <li class="stage">
+          <span class="stage-num">01</span>
+          <h3 class="stage-title">The idea</h3>
+          <p class="stage-text">I just wanted a better TUI.</p>
+          <p class="stage-meta">first commit · 2026.09.18</p>
+        </li>
+        <li class="stage">
+          <span class="stage-num">02</span>
+          <h3 class="stage-title">The TUI</h3>
+          <p class="stage-text">Built the interface.</p>
+          <p class="stage-meta">phases 1–4 · rust · warpui_core</p>
+        </li>
+        <li class="stage">
+          <span class="stage-num">03</span>
+          <h3 class="stage-title">OpenCode</h3>
+          <p class="stage-text">Connected the backend.</p>
+          <p class="stage-meta">http + sse · verified on opencode 2.0.8</p>
+        </li>
+        <li class="stage stage--pivot">
+          <span class="stage-num">04</span>
+          <h3 class="stage-title">Oh ma gwad</h3>
+          <p class="stage-text">"What if I give it memory?" This is where things started getting stupid.</p>
+          <p class="stage-meta">the pivot</p>
+        </li>
+        <li class="stage">
+          <span class="stage-num">05</span>
+          <h3 class="stage-title">Memory</h3>
+          <p class="stage-text">Research → Zero Memory.</p>
+          <p class="stage-meta">phases 5–8 · jsonl · /memory commands</p>
+        </li>
+        <li class="stage stage--research">
+          <span class="stage-num">06</span>
+          <h3 class="stage-title">Laya</h3>
+          <p class="stage-text">More research. A possible decision layer, kept strictly separate from memory.</p>
+          <p class="stage-meta">no code · not even a prototype</p>
+        </li>
+        <li class="stage">
+          <span class="stage-num">07</span>
+          <h3 class="stage-title">UX</h3>
+          <p class="stage-text">The project kept growing. Phase 9 was a week of interaction work.</p>
+          <p class="stage-meta">phase 9 · 2026.09.22</p>
+        </li>
+        <li class="stage">
+          <span class="stage-num">08</span>
+          <h3 class="stage-title">Current state</h3>
+          <p class="stage-text">"Yeah... I'm splitting this up."</p>
+          <p class="stage-meta">tui/ + memory/</p>
+        </li>
+      </ol>
+    </section>
+
+    <!-- 03 / WHAT ACTUALLY EXISTS -->
+    <section class="p-section" id="architecture" aria-labelledby="arch-h">
+      <div class="section-head">
+        <span class="sec-num">03</span>
+        <h2 class="sec-title" id="arch-h">What actually exists</h2>
+        <span class="section-note">from the repo</span>
+      </div>
+
+      <div class="diagram" role="img" aria-label="OWT splits into a TUI crate talking to an OpenCode backend, and a memory crate writing to a JSONL store.">
+        <div class="node node--root dg-root">
+          <p class="node-label">OWT</p>
+          <p class="node-sub">bin: owt</p>
+        </div>
+        <span class="stub"></span>
+        <span class="rail"></span>
+        <div class="dg-branches">
+          <div class="dg-branch">
+            <span class="stub"></span>
+            <div class="node">
+              <p class="node-label">TUI</p>
+              <p class="node-sub">tui/src/tui/</p>
+            </div>
+            <span class="stub"></span>
+            <div class="node">
+              <p class="node-label">OpenCodeBackend</p>
+              <p class="node-sub">ureq · sse /api/event</p>
+            </div>
+            <span class="stub"></span>
+            <div class="node">
+              <p class="node-label">OpenCode server</p>
+              <p class="node-sub">verified on 2.0.8</p>
+            </div>
+          </div>
+          <div class="dg-branch">
+            <span class="stub"></span>
+            <div class="node">
+              <p class="node-label">Zero Memory</p>
+              <p class="node-sub">memory/src/ · zero_memory</p>
+            </div>
+            <span class="stub"></span>
+            <div class="node">
+              <p class="node-label">JSONL store</p>
+              <p class="node-sub">$XDG_DATA_HOME/owt/ · .owt/</p>
+            </div>
+          </div>
+        </div>
+        <div class="dg-caption">
+          <p class="cap">Started as one thing. Slowly became two.</p>
+          <p class="cap-mono">MockBackend implements the same trait — the TUI can't tell them apart.</p>
+          <p class="cap-mono">memory → one frozen owt.memory block, injected at session start</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 / CURRENT STATE -->
+    <section class="p-section" id="state" aria-labelledby="state-h">
+      <div class="section-head">
+        <span class="sec-num">04</span>
+        <h2 class="sec-title" id="state-h">Current state</h2>
+        <span class="section-note">honest status</span>
+      </div>
+
+      <div class="state-panel">
+        <div class="state-row">
+          <span class="state-label">TUI</span>
+          <span class="state-status">working</span>
+          <span class="state-path">tui/ · cargo run</span>
+        </div>
+        <div class="state-row">
+          <span class="state-label">Memory</span>
+          <span class="state-status state-status--sep">separated</span>
+          <span class="state-path">memory/ · zero_memory lib</span>
+        </div>
+        <div class="state-row">
+          <span class="state-label">Laya</span>
+          <span class="state-status state-status--open">research</span>
+          <span class="state-path">no code. just an idea (for now)</span>
+        </div>
+        <div class="state-row">
+          <span class="state-label">Future work</span>
+          <span class="state-status state-status--open">possible</span>
+          <span class="state-path">phase 10 · planned</span>
+        </div>
+        <p class="state-last">last touched: september 2026</p>
+      </div>
+
+      <div class="state-copy">
+        <p>The TUI and memory work are now separated. I'll probably come back to the memory side later.</p>
+        <p>Stopping or splitting a project is normal, so this isn't an apology. Nothing here is trying to replace OpenCode either — OWT is the surface, OpenCode still does the actual work.</p>
+      </div>
+      <p class="state-facts">phase 8 · 239 tests · pty harness 18/18</p>
+    </section>
+
+    <!-- 05 / PROJECT NOTES -->
+    <section class="p-section" id="notes" aria-labelledby="notes-h">
+      <div class="section-head">
+        <span class="sec-num">05</span>
+        <h2 class="sec-title" id="notes-h">Project notes</h2>
+        <span class="section-note">in progress</span>
+      </div>
+
+      <p class="notes-sub">These are the build logs I want to write about this thing. First drafts — links when they exist.</p>
+
+      <div class="notes-list">
+        <div class="note-row">
+          <span class="note-date">09.22</span>
+          <p class="note-title">The TUI finally felt right</p>
+          <span class="note-tags"><span class="pill">rust</span><span class="pill">ux</span></span>
+        </div>
+        <div class="note-row">
+          <span class="note-date">09.21</span>
+          <p class="note-title">I accidentally built a memory system</p>
+          <span class="note-tags"><span class="pill">ai</span><span class="pill">memory</span></span>
+        </div>
+        <div class="note-row">
+          <span class="note-date">09.20</span>
+          <p class="note-title">Why I didn't fork Warp</p>
+          <span class="note-tags"><span class="pill">architecture</span></span>
+        </div>
+        <div class="note-row">
+          <span class="note-date">09.19</span>
+          <p class="note-title">Making OpenCode talk to my UI</p>
+          <span class="note-tags"><span class="pill">opencode</span><span class="pill">sse</span></span>
+        </div>
+        <div class="note-row">
+          <span class="note-date">09.18</span>
+          <p class="note-title">The original stupid idea</p>
+          <span class="note-tags"><span class="pill">tui</span><span class="pill">rust</span></span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span class="year">2026</span>
+    <span class="f-links">
+      <a class="grow" href="https://github.com/ZeroiJ">@ZeroiJ</a>
+      <a class="grow" href="#">RSS</a>
+      <a class="grow" href="https://portfolio.zeroij.workers.dev">portfolio ↗</a>
+    </span>
+  </footer>
+</div>
+</body>
+</html>
