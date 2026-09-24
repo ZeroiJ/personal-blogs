@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tiny KV in Go with mmap — zeroij/blog</title>
+<meta name="description" content="Append-only log + in-memory index + mmap reads. 300 lines, crash-safe, bench included.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/assets/css/site.css">
+</head>
+<body>
+<div class="app">
+  <aside class="side">
+    <div class="brand">zeroij <span>~/blog</span></div>
+    <div class="status"><span class="dot"></span>series: tiny-kv part 1/2<br>next → compaction</div>
+    <nav class="nav" aria-label="Primary">
+      <a href="/">~/index</a>
+      <a href="/posts/tiny-kv.html" class="on" aria-current="page">~/sample-post</a>
+      <a href="https://zeroij.dev" rel="noopener">~/portfolio ↗</a>
+      <a href="/feed.xml">~/rss</a>
+    </nav>
+    <div style="margin-top:12px"><button class="btn" onclick="toggleTheme()">toggle light/dark</button></div>
+  </aside>
+  <main class="main prose">
+    <p class="mono"><a href="/">← ~/index</a> · BUILD · 09-14</p>
+    <h1>Tiny KV in Go with mmap</h1>
+    <p class="mono" style="color:var(--muted)">8 min · <a href="https://github.com/ZeroiJ/personal-blogs">src ↗</a> · go / mmap / durability</p>
+    <p>Goal: feel the LSM tradeoff instead of reading about it. Single file, stdlib only, crash-safe by <code>fsync</code> on commit.</p>
+    <h2>Log format</h2>
+    <p>Records are <code>[keyLen|valLen|key|value|crc]</code>. On open we scan once and rebuild the offset map. Reads are one <code>mmap</code> slice, writes are O(1) appends.</p>
+<pre><code>// pseudo — index rebuild
+for off := 0; off &lt; size; {
+  k, v, n := readRecord(mmap[off:])
+  index[k] = off
+  off += n
+}</code></pre>
+    <h2>Numbers</h2>
+<pre><code>$ go test -bench=. -count=3
+BenchmarkPut-8   412331   2891 ns/op
+BenchmarkGet-8  1842211    651 ns/op
+$ ls -lh test.db
+12M  test.db</code></pre>
+    <p>Fine for &lt;100k keys. Compaction is where it gets real — that's part 2, on branch <code>part2-compact</code>.</p>
+    <ul>
+      <li>What breaks first: sparse deletes, not writes</li>
+      <li>What I'd do differently: fixed-size segments sooner</li>
+    </ul>
+    <p><a class="btn" href="/">← back to index</a></p>
+  </main>
+</div>
+<script>function toggleTheme(){var h=document.documentElement;h.dataset.theme=h.dataset.theme==="light"?"dark":"light";try{localStorage.setItem("zb-theme",h.dataset.theme)}catch(e){}}try{var s=localStorage.getItem("zb-theme");if(s)document.documentElement.dataset.theme=s;}catch(e){}</script>
+</body>
+</html>
