@@ -19,13 +19,18 @@ xdg-open sketches/005-portfolio-editorial/article.html
 
 ```
 AGENTS.md              rulebook
+assets/css/site.css    shared design system (from sketch 005)
+projects/              project pages (OWT so far)
 sketches/005-...       approved homepage + article design
-_headers _redirects    cloudflare pages config
+_headers _redirects    cloudflare config
 404.html robots.txt favicon.svg
 ```
 
-The production site (porting 005 to root, RSS, posts) is not built yet —
-per AGENTS.md, design first, real content only from real material.
+Pages in progress:
+- `projects/opencode-warp-tui/` — project journal page (five sections)
+
+The blog homepage and article pages are not built yet — per AGENTS.md,
+real content only from real material.
 
 ## Deploy — Cloudflare Pages (when built)
 1. Pages → Create → Connect to Git → `ZeroiJ/personal-blogs`
