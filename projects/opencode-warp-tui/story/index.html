@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>I Tried Making a Better OpenCode TUI. It Got Out of Hand. — Sujal Birwadkar</title>
+<meta name="description" content="How a weekend-sized idea — a nicer Warp-style TUI for OpenCode — turned into a TUI, a memory engine, a pile of research, and two folders where there used to be one.">
+<link rel="canonical" href="https://personal-blogs.zeroij.workers.dev/projects/opencode-warp-tui/story/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="I Tried Making a Better OpenCode TUI. It Got Out of Hand.">
+<meta property="og:description" content="How a weekend-sized TUI idea became two projects — and a memory system nobody planned.">
+<meta property="og:url" content="https://personal-blogs.zeroij.workers.dev/projects/opencode-warp-tui/story/">
+<meta property="article:published_time" content="2026-09-22">
+<meta property="article:tag" content="rust">
+<meta property="article:tag" content="opencode">
+<meta property="article:tag" content="tui">
+<meta name="twitter:card" content="summary">
+<link rel="alternate" type="application/rss+xml" title="Sujal Birwadkar — notes" href="/feed.xml">
+<link rel="icon" href="../../../favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../../assets/css/site.css">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div class="grid-bg" aria-hidden="true"></div>
+<svg class="grain" aria-hidden="true"><filter id="grain-f"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="4" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#grain-f)"/></svg>
+
+<div class="frame frame--wide">
+  <header class="masthead">
+    <div class="brand">
+      <a class="wordmark" href="../../../">Sujal Birwadkar</a>
+      <span class="brand-sub">/ notes</span>
+    </div>
+    <nav class="nav" aria-label="Page">
+      <a href="../../../">Writing</a>
+      <a href="../">Project</a>
+      <a href="https://github.com/ZeroiJ/opencode-warp-tui">GitHub ↗</a>
+    </nav>
+  </header>
+  <hr class="rule">
+
+  <main id="main" class="art-layout">
+    <aside class="toc" aria-label="On this page">
+      <p class="toc-title">On this page</p>
+      <ol class="toc-list">
+        <li><a href="#idea"><span>01</span>The idea</a></li>
+        <li><a href="#tui"><span>02</span>Building the TUI</a></li>
+        <li><a href="#opencode"><span>03</span>Then came OpenCode</a></li>
+        <li><a href="#pivot"><span>04</span>Oh ma gwad</a></li>
+        <li><a href="#memory"><span>05</span>The memory rabbit hole</a></li>
+        <li><a href="#laya"><span>06</span>Laya</a></li>
+        <li><a href="#ux"><span>07</span>UX</a></li>
+        <li><a href="#wait"><span>08</span>Wait, what am I building?</a></li>
+        <li><a href="#split"><span>09</span>Splitting the project</a></li>
+        <li><a href="#left"><span>10</span>Where I left it</a></li>
+      </ol>
+    </aside>
+
+    <article class="article">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="../">← OWT project</a></nav>
+
+      <header class="art-head">
+        <p class="kicker">Project journal</p>
+        <h1>I Tried Making a Better OpenCode TUI.<br>It Got Out of Hand.</h1>
+        <p class="art-meta">
+          <time datetime="2026-09-22">September 2026</time>
+          <span class="sep">·</span><span>Rust · OpenCode · TUI · AI</span>
+          <span class="sep">·</span><span>~15 min read</span>
+        </p>
+      </header>
+
+      <div class="prose">
+        <p>I wanted a better TUI for <a href="https://github.com/sst/opencode">OpenCode</a>. That was the pitch. Not "a platform", not "an agent framework" — just: I don't like living in whatever client happens to be available, and Warp's terminal UI has interaction ideas worth stealing, so let me build my own little one around OpenCode.</p>
+        <p>It took five days. The idea is now two crates, roughly 19,000 lines of Rust, a memory system I did not plan, a decision layer that exists only in research documents, and a lot of notes explaining why each of those things happened.</p>
+        <p>This is the story of how that happened, including the parts where I was wrong.</p>
+
+        <h2 id="idea"><span class="part">Part 01</span>The stupidly simple idea</h2>
+        <p>The original scope was tiny, and I want to be honest about how tiny, because everything else in this article is downstream of not noticing the scope creep until it was expensive.</p>
+        <p>Original scope: a Warp-style block transcript, a multiline prompt, tabs for sessions, and a backend seam so the UI never had to know what server it was talking to. No memory. No decision-making layer. No "platform". Just a nicer way to drive OpenCode from a terminal.</p>
+        <p>Before writing any of it, I read Warp's source. Not to fork it — to understand how its TUI was put together. Two things came out of that week of homework.</p>
+        <p>First: the license is split. Warp's UI framework crates (<code>warpui_core</code>, <code>warpui</code>) are MIT; the rest of the repository, including the <code>warp_tui</code> crate I actually cared about, is AGPL-3.0-only. So the rule I wrote down for myself was simple: <strong>Warp is a reference, never a backend.</strong> I mapped the components, snapshotted seven presentation-only files into a frozen <code>warp-tui/</code> folder for comparison, and left the Warp checkout itself untouched. It is still untouched. I check.</p>
+        <div class="callout">
+          <p class="callout-label">Why</p>
+          <p>Because "I looked at Warp's code" quietly becomes "I copied Warp's code" about two weeks later, and the week I wrote the rule down was the cheapest possible moment to write it.</p>
+        </div>
+        <p>Second: the parts of Warp's TUI that are actually good are the unglamorous ones. A block transcript where tool calls and shell output sit inline with the conversation. Gates — the little cards that block the transcript until you answer a permission request. A statusline that tells you what's happening. That list became my spec.</p>
+
+        <h2 id="tui"><span class="part">Part 02</span>Building the TUI</h2>
+        <p>The first version of OWT was a standalone Rust crate — binary <code>owt</code> — that ran against a scripted mock backend, because I wanted the interface to be real before the network was. The mock was deterministic: type something, get a scripted answer, trigger a fake tool call, answer a fake gate. Everything about the UI could be exercised with zero servers running.</p>
+        <p>From day one, the TUI never saw an OpenCode type. Views render snapshots; gestures call trait methods. This is the single decision I'd defend hardest, because it's the reason the mock and the real backend are interchangeable to the UI:</p>
+        <div class="code-block">
+          <p class="code-lang">rust — tui/src/backend/mod.rs</p>
+<pre><code>pub trait Backend {
+    fn session_summaries(&amp;self) -&gt; Vec&lt;SessionSummary&gt;;
+    fn session_blocks(&amp;self, id: &amp;str) -&gt; Vec&lt;Block&gt;;
+    fn blocker(&amp;self) -&gt; Option&lt;Blocker&gt;;      // gate waiting on you?
+    fn submit(&amp;mut self, text: String);
+    fn answer_question(&amp;mut self, option: usize);
+    // ... and later: compact, diff, revert, fork, model/agent switch
+}</code></pre>
+        </div>
+        <p>Some early things that only sound obvious in retrospect: the streaming pump polls a queue of <code>StreamEvent</code>s on repaint, because spawned timers don't run under Warp's runtime — I found that out reading Warp's source, not by debugging my own bug. The scroll model got an explicit "pinned to bottom" flag after the classic <code>usize::MAX</code> hack quietly broke mid-word wrapping. And the theme went through a seam instead of inheriting Warp's builder, so the dark theme is mine and only approximately like theirs.</p>
+        <p>The part I'm happiest about isn't visual. It's <code>scripts/pty_probe.py</code> — a harness that drives the real binary under a pseudo-terminal and asserts on the exact character grid it painted. Eighteen checks: scrolling, wheel direction, pasted newlines, streaming, gates, cancel, tabs, help, exit, resizes. "It looks right in my terminal" stopped being evidence the day I wrote the first assertion.</p>
+        <p>What I didn't have, and wrote down as gaps instead of pretending otherwise: selection, vim motions, completion, real Markdown. <code>markdown-lite</code> is genuinely called that in the code.</p>
+
+        <h2 id="opencode"><span class="part">Part 03</span>Then came OpenCode</h2>
+        <p>Here's where "simple TUI" stopped being simple. OpenCode needs a way to push live updates to a client instead of making the client ask "did anything happen?" constantly. That's what the server-sent-events stream is for, and that's what <code>OpenCodeBackend</code> is: blocking REST calls for commands (<code>ureq</code>, 15-second timeouts, no async runtime fighting the TUI loop) plus one subscriber thread for the event stream. The stream is live-only — if you miss events, the gap is real, so after a gap the adapter re-bases state from REST instead of trying to patch a hole in a stream it never received.</p>
+        <p>The boring middle is what made it feel like a tool instead of a wrapper:</p>
+        <ul>
+          <li>Questions and permissions become gates you answer with digit keys.</li>
+          <li>History hydrates oldest-first, because the server's default newest-first order renders transcripts upside-down if you're careless — a bug I have now seen in other tools and will never unsee.</li>
+          <li>A dropped stream produces synthetic <code>connection.lost</code> / <code>connection.restored</code> signals, so stale busy state clears and you get one honest notice per gap instead of a spinner that never stops.</li>
+          <li>Every failure is an in-band error in the transcript. The session never dies silently.</li>
+        </ul>
+        <p>And then the live probes started teaching me things the docs didn't say:</p>
+        <div class="callout callout--problem">
+          <p class="callout-label">Problem</p>
+          <p>On OpenCode 2.0.8, the <code>question</code> tool never emits <code>question.v2.asked</code>. It materializes as a <code>form.created</code> event, and the answer goes back over a different route entirely. I found this by probing a live server with a throwaway session and then deleting the session, not by reading documentation — the documentation describes a world where the question tool announces itself politely, and that is not the world.</p>
+        </div>
+        <p>Other footguns, all found the same way:</p>
+        <ul>
+          <li>The server <code>204</code>-accepts model and agent ids that don't exist, and then takes your turn somewhere it can never be recovered from. So the client validates against server discovery and refuses to send garbage. A success status code that means nothing is worse than an error.</li>
+          <li><code>revert</code> is two destructive operations wearing one name: staging it restores your files immediately, committing it deletes messages irreversibly. So it stages, shows you the actual affected files, and waits for a digit.</li>
+          <li>A forked session inherits history but not instruction entries or revert boundaries — close enough to correct that you'd only notice weeks later.</li>
+        </ul>
+        <p>None of these are exciting. All of them are the difference between a TUI that demos well and one I'd still use next week.</p>
+
+        <h2 id="pivot"><span class="part">Part 04</span>Oh ma gwad</h2>
+        <p>At this point I had: a TUI, a backend seam, a real OpenCode integration, gates, history, reconnects, and the advanced operations (<code>compact</code>, <code>diff</code>, <code>revert</code>, <code>fork</code>, model/agent switching). It worked. People — one person, me — could use it.</p>
+        <p>And then, with no prompting from history whatsoever, I had the following thought:</p>
+        <p class="pull">What if it remembered things?</p>
+        <p>Not "should agents have memory" as an abstract question. Specifically: this TUI starts a new OpenCode session every time, and every session starts amnesiac. It knows nothing about my preferences, my project, or the decision I made yesterday that it should have made again today. I wanted to fix that, and I want to be honest that this is the exact moment the project forked away from "weekend-sized".</p>
+
+        <h2 id="memory"><span class="part">Part 05</span>The memory rabbit hole</h2>
+        <p>My first instinct was the obvious one: a vector database. Then I spent three research phases trying to talk myself out of it, which is where most of the actual work in this project went.</p>
+        <p>Phase one was a survey: read how other systems do this — Mem0, Letta, Hindsight, OpenViking, a couple of others — and build a capability matrix. Almost all of them need an LLM for extraction, embeddings for retrieval, and a server for storage. The verdict from the comparison doc: exclude any design where the cloud is the default or the requirement. A personal TUI that needs an API key to remember your project is a worse TUI.</p>
+        <p>Phase two was the useful one: a minimality review of my own ideas, with the explicit goal of killing them. It killed the six-component design, it killed confidence scores, it killed SQLite and FTS5 "for now", and it landed on three components: a <code>MemoryApi</code> for explicit user commands, a <code>MemoryStore</code> (plain JSONL, one file per scope), and a Context Builder that assembles what gets injected.</p>
+        <div class="callout">
+          <p class="callout-label">Decision</p>
+          <p>The first version was deliberately boring: JSONL files, no database, no embeddings, no automatic anything. Not because those are bad ideas — because every one of them is a system I'd have to operate, debug, and explain, and none of them was needed to answer the original question.</p>
+        </div>
+        <p>What a memory actually is here — one line of JSONL:</p>
+        <div class="code-block">
+          <p class="code-lang">json — one record, verbatim from the storage design</p>
+<pre><code>{"v":1,"id":"owt_1780000000000_1234_7","key":"lang","kind":"preference",
+ "scope":"user","content":"Prefer Rust for new services.",
+ "source":"user","status":"ACTIVE","pinned":true,
+ "created_at":"2026-09-18T10:00:00Z","updated_at":"2026-09-18T10:00:00Z",
+ "session_id":"ses_f4a63109effeiU7GgDsfKzJnSY","source_ref":"msg#3",
+ "quote":"I'd rather write new services in Rust."}</code></pre>
+        </div>
+        <p>Two kinds (<code>fact</code>, <code>preference</code>), two scopes (<code>user</code>, <code>project</code>), a status that only ever goes ACTIVE → SUPERSEDED (correction never silently overwrites), and — my favourite detail — no scores anywhere. No confidence, no importance, no novelty. If I can't justify a number, it doesn't get stored.</p>
+        <p>The unglamorous engineering is where the trust comes from:</p>
+        <ul>
+          <li>Mutations rewrite the file through a temp file, <code>fsync</code>, and an atomic rename, so a crash mid-write can't leave a half-memory. Appends are for tombstones: a forgotten memory leaves a hash behind, so an extraction bug can't resurrect it next week.</li>
+          <li><code>flock</code> plus an in-process mutex, because I run multiple sessions and they share the same store.</li>
+          <li>Secrets are refused outright — <code>sk-</code>, PEM blocks, <code>ghp_</code>, AWS keys, Slack tokens — with <em>no state change</em>. Not "warned about afterwards": refused, and the refusal itself is visible. Ambiguous shapes like <code>label: value</code> get stored with a warning.</li>
+          <li>Everything is <code>0600</code>, directories are <code>0700</code>, symlinks are refused.</li>
+        </ul>
+        <p>Then the part that made it real: injection. The idea is one frozen <code>owt.memory</code> block, written into the session once at startup and never touched again — the agent doesn't get to rewrite its own instructions mid-conversation. The seam for this is OpenCode's session instruction entries, and I verified the edges against a live 2.0.8 server: writes return <code>204</code>, and a 300 KB block gets rejected with a <code>413</code> and a very specific limit — 262,144 bytes. So the context builder is budgeted: 12,000 characters by default, assembled in a fixed tier order (project-pinned, user-pinned, project-recent, user-recent), with a hard ceiling on the encoded block.</p>
+        <p>And the commands are just commands: <code>/memory remember</code>, <code>update</code>, <code>forget</code>, <code>pin</code>, <code>list</code>, <code>show</code>. They get intercepted before the prompt becomes a network call, so a typo in a memory command never becomes a prompt to the model.</p>
+        <p>Phase 8 was the last push, and it was the one where I was most tempted to be reasonable-sounding and wrong. The research verdict for "memory intelligence" — extraction, retrieval, consolidation, the whole smart-sounding list — came back as: deterministic rules over your own messages, at session end, into a quarantine queue, and <em>you</em> confirm before anything is stored. No embeddings. No LLM. No daemon. I measured the alternative on paper first: LLM extraction meant 13 KB of prompts per pass, a cost line, and a model-config dependency, and my own rule was to measure the boring version's precision before paying for the clever one.</p>
+        <p>So the "intelligence" is: a few rules turn your sentences into typed suggestions, they're sorted by a lexical scorer that only decides the order things appear in (it never claims to know what's true), and then <code>/memory suggest</code>, <code>confirm</code>, <code>discard</code>. Quarantined files, atomic writes, thirty-day lazy expiry, secrets re-screened at confirm time. The agent proposes; I decide. That's the whole design philosophy of the memory system in one sentence.</p>
+
+        <h2 id="laya"><span class="part">Part 06</span>Then I started researching Laya</h2>
+        <p>Somewhere in there, the question I'm building for changed. It stopped being "can I make OpenCode look better?" and became "what would an agent system built around OpenCode look like if I controlled the surrounding architecture?" — which is a much bigger question, and I walked into it without noticing.</p>
+        <p>Zero Memory answers one question: <em>what does the system know?</em> Laya was the name I gave to a possible second layer that would answer a different one: <em>what decision should be made?</em> The idea is that a decision layer sits beside the model — not inside it, not replacing it — and owns the "which path do we take" question that a model otherwise guesses at.</p>
+        <div class="callout">
+          <p class="callout-label">Note</p>
+          <p>There is no Laya code in this repository. No prototype, no integration, no stub. It's an architectural direction that exists in the docs because separating "knowledge" from "decision" is the most useful thing I learned while researching memory — not because I built it. The UX research explicitly leaves it untouched: no decision-layer UI, no model-driven UI.</p>
+        </div>
+        <p>I mention it here because it's the clearest example of the pattern that got me in trouble in the first place: an idea that arrives as a legitimate question, gets a name, gets a research doc, and would very slowly have become a subsystem if I hadn't been paying attention. So I wrote the boundary down — Laya stays out of the memory system, by design, forever, until there's a reason and an authorization.</p>
+
+        <h2 id="ux"><span class="part">Part 07</span>UX</h2>
+        <p>The other thing that quietly became a project of its own was how the thing feels to use. This is what happens when you actually drive your own tool every day instead of demoing it.</p>
+        <p>Prompt history went in first, because retyping the same prompts was the most annoying thing in daily use — up and down recalls them, in-memory ring for now, disk later. Gates moved from digits 1–3 to digits 1–9, because sometimes the agent has more questions than a phone number can answer, and the footer started telling you what the digits do. Long shell and diff output collapses, because a transcript you have to scroll through to find the conversation is a transcript you've lost. A zero-state, so an empty session looks intentional. A working dot on the tab that's actually running a turn. Word-wise motion and kills in the prompt, because I miss them and they're twenty lines. Slash commands shared between both menus, so the same command doesn't live in two places with two behaviours.</p>
+        <p>And several things I decided <em>not</em> to do, which is most of the work: no side panels, no dashboards, no configurable nine-item statusline, no smart titles, no vim-mode editor port. The prompt box is not an editor. A deterministic UI that tells you exactly what state it's in beats a "smart" one that occasionally surprises you, and that's the whole UX principle of the project in one sentence. The UX research doc is seven documents long precisely because the answer to most questions was "no" and I wanted the reasons written down.</p>
+        <p>All of this — every UX item on that list — was view-layer work. No backend changes, no memory changes, no Warp changes. 245 tests passing, the pty harness at 19 checks.</p>
+
+        <h2 id="wait"><span class="part">Part 08</span>Wait, what am I building?</h2>
+        <p>Let me just list what's in the repository, because the list is the punchline:</p>
+        <ul>
+          <li>A Warp-style TUI with tabs, transcript, gates, prompts, and menus.</li>
+          <li>An OpenCode integration: REST, SSE, sessions, history, reconnect, seven advanced operations, with a real backend boundary.</li>
+          <li>A memory engine: JSONL store, scopes, budgets, tombstones, secret refusal, injection.</li>
+          <li>Memory intelligence: rules, quarantine, suggest/confirm/discard.</li>
+          <li>Research into a decision layer that has no code.</li>
+          <li>A UX pass that is basically a second product.</li>
+        </ul>
+        <p>Six things. I started with one. Nothing on that list is a stupid project, and that's exactly the problem — every one of them was justified, and the sum of six justified things is not "a weekend TUI" anymore. You don't notice this while each piece is going well. You notice it when you're mentally editing memory code at 1 a.m. and realize you haven't touched the UI in three weeks.</p>
+
+        <h2 id="split"><span class="part">Part 09</span>Splitting the project</h2>
+        <p>So the project is now two folders that don't pretend to be one thing:</p>
+        <p class="diagram-block">tui/ — the interface. Binary <code>owt</code>, the <code>Backend</code> trait, the OpenCode adapter. Usable today; this is the part I use.<br>memory/ — the <code>zero_memory</code> library. The store, the API, the rules. Finished enough to keep, separate enough to pick up later.</p>
+        <p>This wasn't a failure and it wasn't a rewrite. It's what the project had actually become: two things with different lifetimes and different reasons to change. The TUI ships on OpenCode's schedule; the memory system has opinions about extraction and budgets that don't change when OpenCode ships a new event shape. Coupling them meant every OpenCode upgrade was also a memory-system review, which is a coupling I chose and then didn't want.</p>
+        <p>The load-bearing wall never moved, by the way. The TUI still doesn't know what OpenCode is. That's the one architectural decision from week one that paid out over and over, including on the day I needed to stop and go look at the memory code.</p>
+
+        <h2 id="left"><span class="part">Part 10</span>Where I left it</h2>
+        <div class="state-block">
+          <p><span>TUI</span>working — usable today, the thing I actually run</p>
+          <p><span>Memory</span>separated — <code>zero_memory</code> library, can be picked up later</p>
+          <p><span>Laya</span>research — a direction, zero code, staying out of everything else</p>
+          <p><span>Phase 10</span>planned — production hardening: migrations, crash recovery, version compatibility, the boring list</p>
+        </div>
+        <p>The repository is AGPL-3.0-only, eight commits, September 18 to 22. Tests went 144 → 195 → 239 → 245 across the phases; the pty harness went 18 → 19. Last touched the 22nd.</p>
+        <p>One more motive I should admit, because it explains a lot of the probing: much of the work was deliberately done against the free and cheap models OpenCode makes available — <code>mimo-v2.5-free</code>, <code>muse-spark-1.3</code>, whatever <code>GET /api/model</code> offered that week. I wanted to know first-hand how far modest models could be pushed through a real interface, not from papers. It's a builder's question, not a benchmark; there are no numbers in this article because I wasn't measuring. But the constraint made every design choice more honest: if a feature only works beautifully with a frontier model, this project doesn't really have it.</p>
+        <p>And the rule that ran the whole thing: if an idea couldn't survive contact with an implementation, it stayed a research document. That's what Laya is. That's what Phase 10 is. The pile of notes in <code>research/</code> isn't a backlog of things I failed to finish; it's the honest record of what I was allowed to conclude before writing code.</p>
+
+        <div class="closing">
+          <p>I started this because I wanted a nicer TUI.</p>
+          <p>Now I have a nicer TUI, a memory system, a pile of research, a decision layer that doesn't exist yet, and two folders where there used to be one. The TUI works. The memory half is parked in a drawer I can open whenever I feel brave.</p>
+          <p>So — technically, mission accomplished. Mostly I just kept adding things, and the adding is the part I'd do again.</p>
+        </div>
+      </div>
+
+      <footer class="art-foot">
+        <p class="tagline">Written mostly from the project's own commit log, phase reports, and research docs — including the parts where the roadmap table was wrong and the completion reports were right.</p>
+        <nav class="art-nav" aria-label="Post navigation">
+          <a class="grow" href="../">← The OWT project page</a>
+          <a class="grow" href="https://github.com/ZeroiJ/opencode-warp-tui">Source on GitHub ↗</a>
+        </nav>
+      </footer>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <span class="year">2026</span>
+    <span class="f-links">
+      <a class="grow" href="https://github.com/ZeroiJ">@ZeroiJ</a>
+      <a class="grow" href="../../../feed.xml">RSS</a>
+      <a class="grow" href="https://portfolio.zeroij.workers.dev">portfolio ↗</a>
+    </span>
+  </footer>
+</div>
+</body>
+</html>
