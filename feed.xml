@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>Sujal Birwadkar — notes</title>
+<link>https://personal-blogs.zeroij.workers.dev/</link>
+<atom:link href="https://personal-blogs.zeroij.workers.dev/feed.xml" rel="self" type="application/rss+xml"/>
+<description>I build things, break them, and write down what actually happened.</description>
+<language>en</language>
+<item>
+<title>OpenCode Warp TUI — how a weekend TUI idea became two projects</title>
+<link>https://personal-blogs.zeroij.workers.dev/projects/opencode-warp-tui/</link>
+<guid isPermaLink="true">https://personal-blogs.zeroij.workers.dev/projects/opencode-warp-tui/</guid>
+<pubDate>Tue, 22 Sep 2026 00:00:00 GMT</pubDate>
+<description>I tried making a better, simpler TUI for OpenCode. It got out of hand — now it's a working TUI, a memory engine, and one idea that's still just an idea.</description>
+</item>
+</channel>
+</rss>
